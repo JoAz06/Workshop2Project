@@ -205,3 +205,61 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+### --- JetBrains (IntelliJ, PyCharm, WebStorm, etc.) ---
+.idea/
+*.iws
+*.iml
+*.ipr
+# Exception: If you want to share project run configurations
+# !.idea/runConfigurations/
+
+### --- Visual Studio Code ---
+.vscode/
+# Exception: If you want to share recommended extensions/settings
+# !.vscode/settings.json
+# !.vscode/tasks.json
+# !.vscode/launch.json
+# !.vscode/extensions.json
+*.code-workspace
+.history/
+
+### --- Visual Studio ---
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+
+### --- Eclipse ---
+.metadata
+.gradle/
+bin/
+tmp/
+.project
+.classpath
+.settings/
+*.launch
+
+### --- Sublime Text ---
+*.sublime-project
+*.sublime-workspace
+
+### --- Vim / Emacs ---
+[._]*.s[a-v][a-z]
+[._]sw[a-p]
+.netrwhist
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+tramp
+.\#*
+
+### --- General OS Junk ---
+.DS_Store
+Thumbs.db
+desktop.ini
