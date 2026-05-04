@@ -264,7 +264,7 @@ tramp
 Thumbs.db
 desktop.ini
 
-ml_models/*
+ml_models/**
 
 
 .gitattributes
