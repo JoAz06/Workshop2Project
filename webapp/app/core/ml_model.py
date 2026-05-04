@@ -6,28 +6,41 @@ import numpy as np
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_DIR = os.path.join(BASE_DIR, "ml_models")
 
-xgb_model = joblib.load(os.path.join(MODEL_DIR, "xgb_model.pkl"))
-scaler = joblib.load(os.path.join(MODEL_DIR, "scaler.pkl"))
-ordinalEncoder = joblib.load(os.path.join(MODEL_DIR, "ordinal.pkl"))
-X_train = joblib.load(os.path.join(MODEL_DIR, "X_train.pkl"))
-X_train_pre_encoding = joblib.load(os.path.join(MODEL_DIR, "X_train_pre_encoding.pkl"))
-numeric_cols = joblib.load(os.path.join(MODEL_DIR, "numeric_cols.pkl"))
-categorical_cols = joblib.load(os.path.join(MODEL_DIR, "categorical_cols.pkl"))
-cap_cols = joblib.load(os.path.join(MODEL_DIR, "cap_cols.pkl"))
-skewed_cols = joblib.load(os.path.join(MODEL_DIR, "skewed_cols.pkl"))
-ordinal_cols = joblib.load(os.path.join(MODEL_DIR, "ordinal_cols.pkl"))
-ohe_cols = joblib.load(os.path.join(MODEL_DIR, "ohe_cols.pkl"))
-DecisionTree = joblib.load(os.path.join(MODEL_DIR, "decision_tree.pkl"))
-_cap_bounds = joblib.load(os.path.join(MODEL_DIR, "cap_bounds.pkl"))
+Rxgb_model = joblib.load(os.path.join(MODEL_DIR, "Rxgb_model.pkl"))
+Rscaler = joblib.load(os.path.join(MODEL_DIR, "Rscaler.pkl"))
+RordinalEncoder = joblib.load(os.path.join(MODEL_DIR, "Rordinal.pkl"))
+RX_train = joblib.load(os.path.join(MODEL_DIR, "RX_train.pkl"))
+RX_train_pre_encoding = joblib.load(os.path.join(MODEL_DIR, "RX_train_pre_encoding.pkl"))
+Rnumeric_cols = joblib.load(os.path.join(MODEL_DIR, "Rnumeric_cols.pkl"))
+Rcategorical_cols = joblib.load(os.path.join(MODEL_DIR, "Rcategorical_cols.pkl"))
+Rcap_cols = joblib.load(os.path.join(MODEL_DIR, "Rcap_cols.pkl"))
+Rskewed_cols = joblib.load(os.path.join(MODEL_DIR, "Rskewed_cols.pkl"))
+Rordinal_cols = joblib.load(os.path.join(MODEL_DIR, "Rordinal_cols.pkl"))
+Rohe_cols = joblib.load(os.path.join(MODEL_DIR, "Rohe_cols.pkl"))
+R_cap_bounds = joblib.load(os.path.join(MODEL_DIR, "Rcap_bounds.pkl"))
+
+
+CDecisionTree = joblib.load(os.path.join(MODEL_DIR, "Cdecision_tree.pkl"))
+Cscaler = joblib.load(os.path.join(MODEL_DIR, "Cscaler.pkl"))
+CordinalEncoder = joblib.load(os.path.join(MODEL_DIR, "Cordinal.pkl"))
+CX_train = joblib.load(os.path.join(MODEL_DIR, "CX_train.pkl"))
+CX_train_pre_encoding = joblib.load(os.path.join(MODEL_DIR, "CX_train_pre_encoding.pkl"))
+Cnumeric_cols = joblib.load(os.path.join(MODEL_DIR, "Cnumeric_cols.pkl"))
+Ccategorical_cols = joblib.load(os.path.join(MODEL_DIR, "Ccategorical_cols.pkl"))
+Ccap_cols = joblib.load(os.path.join(MODEL_DIR, "Ccap_cols.pkl"))
+Cskewed_cols = joblib.load(os.path.join(MODEL_DIR, "Cskewed_cols.pkl"))
+Cordinal_cols = joblib.load(os.path.join(MODEL_DIR, "Cordinal_cols.pkl"))
+Cohe_cols = joblib.load(os.path.join(MODEL_DIR, "Cohe_cols.pkl"))
+C_cap_bounds = joblib.load(os.path.join(MODEL_DIR, "Ccap_bounds.pkl"))
 
 def predict_medical_cost(**user_inputs):
-    base_row = X_train_pre_encoding.iloc[[0]].copy()
+    base_row = RX_train_pre_encoding.iloc[[0]].copy()
 
-    for col in X_train_pre_encoding.columns:
-        if col in numeric_cols:
-            base_row[col] = X_train_pre_encoding[col].median()
-        elif col in categorical_cols:
-            base_row[col] = X_train_pre_encoding[col].mode()[0]
+    for col in RX_train_pre_encoding.columns:
+        if col in Rnumeric_cols:
+            base_row[col] = RX_train_pre_encoding[col].median()
+        elif col in Rcategorical_cols:
+            base_row[col] = RX_train_pre_encoding[col].mode()[0]
 
     for col, val in user_inputs.items():
         base_row[col] = val
@@ -79,70 +92,70 @@ def predict_medical_cost(**user_inputs):
     )
 
     #Capping
-    for col, (lo, hi) in _cap_bounds.items():
+    for col, (lo, hi) in R_cap_bounds.items():
         if col in base_row.columns:
             base_row[col] = np.clip(base_row[col], lo, hi)
 
     #Log transformation
-    for col in skewed_cols:
+    for col in Rskewed_cols:
         if col in base_row.columns:
             base_row[col] = np.log1p(base_row[col])
 
     # Imputation
-    for col in numeric_cols:
+    for col in Rnumeric_cols:
         if col in base_row.columns and base_row[col].isna().any():
-            base_row[col] = X_train_pre_encoding[col].median()
+            base_row[col] = RX_train_pre_encoding[col].median()
 
     #Encoding
-    base_row[ordinal_cols] = ordinalEncoder.transform(base_row[ordinal_cols])
+    base_row[Rordinal_cols] = RordinalEncoder.transform(base_row[Rordinal_cols])
 
-    present_ohe = [col for col in ohe_cols if col in base_row.columns]
+    present_ohe = [col for col in Rohe_cols if col in base_row.columns]
     base_row = pd.get_dummies(base_row, columns=present_ohe, drop_first=True)
 
-    base_row = base_row.reindex(columns=X_train.columns, fill_value=0)
+    base_row = base_row.reindex(columns=RX_train.columns, fill_value=0)
 
-    scaled_row = scaler.transform(base_row)
-    pred = xgb_model.predict(scaled_row)[0]
+    scaled_row = Rscaler.transform(base_row)
+    pred = Rxgb_model.predict(scaled_row)[0]
 
     return round(float(pred), 2)
 
 
 def predict_if_high_risk(**user_inputs):
-    base_row = X_train_pre_encoding.iloc[[0]].copy()
+    base_row = CX_train_pre_encoding.iloc[[0]].copy()
 
-    for col in X_train_pre_encoding.columns:
-        if col in numeric_cols:
-            base_row[col] = X_train_pre_encoding[col].median()
-        elif col in categorical_cols:
-            base_row[col] = X_train_pre_encoding[col].mode()[0]
+    for col in CX_train_pre_encoding.columns:
+        if col in Cnumeric_cols:
+            base_row[col] = CX_train_pre_encoding[col].median()
+        elif col in Ccategorical_cols:
+            base_row[col] = CX_train_pre_encoding[col].mode()[0]
 
     for col, val in user_inputs.items():
         base_row[col] = val
 
     #Capping
-    for col, (lo, hi) in _cap_bounds.items():
+    for col, (lo, hi) in C_cap_bounds.items():
         if col in base_row.columns:
             base_row[col] = np.clip(base_row[col], lo, hi)
 
     #Log transformation
-    for col in skewed_cols:
+    for col in Cskewed_cols:
         if col in base_row.columns:
             base_row[col] = np.log1p(base_row[col])
 
     # Imputation
-    for col in numeric_cols:
+    for col in Cnumeric_cols:
         if col in base_row.columns and base_row[col].isna().any():
-            base_row[col] = X_train_pre_encoding[col].median()
+            base_row[col] = CX_train_pre_encoding[col].median()
 
     #Encoding
-    base_row[ordinal_cols] = ordinalEncoder.transform(base_row[ordinal_cols])
+    base_row[Cordinal_cols] = CordinalEncoder.transform(base_row[Cordinal_cols])
 
-    present_ohe = [col for col in ohe_cols if col in base_row.columns]
+    present_ohe = [col for col in Cohe_cols if col in base_row.columns]
     base_row = pd.get_dummies(base_row, columns=present_ohe, drop_first=True)
 
-    base_row = base_row.reindex(columns=X_train.columns, fill_value=0)
+    base_row = base_row.reindex(columns=CX_train.columns, fill_value=0)
 
-    scaled_row = scaler.transform(base_row)
-    pred = DecisionTree[1].predict(scaled_row)[0]
+    scaled_row = Cscaler.transform(base_row)
+    pred = CDecisionTree[1].predict(scaled_row)[0]
 
     return round(float(pred), 2)

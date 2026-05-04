@@ -24,11 +24,10 @@ def predict_risk_view(request):
 
     if request.method == "POST":
         form = RiskPredictionForm(request.POST)
-
         if form.is_valid():
             data = form.cleaned_data
             result = predict_if_high_risk(**data)
     else:
         form = RiskPredictionForm()
 
-    return render(request, "core/predictRisk.html", {"form": form, "result": result})
+    return render(request, "core/predictRisk.html", {"form": form, "result": 'High' if result == 1 else 'Low'})

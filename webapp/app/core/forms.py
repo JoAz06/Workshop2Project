@@ -13,7 +13,7 @@ class MedicalForm(forms.Form):
     diastolic_bp = forms.FloatField()
     hospitalizations_last_3yrs = forms.IntegerField()
     age = forms.IntegerField()
-    sex = forms.ChoiceField(choices=[("Male","Male"),("Female","Female")])
+    sex = forms.ChoiceField(choices=[("Male","Male"),("Female","Female"),("Other","Other")])
 
 
 
@@ -39,13 +39,16 @@ class RiskPredictionForm(forms.Form):
 
     sex = forms.ChoiceField(choices=[
         ("Male", "Male"),
-        ("Female", "Female")
+        ("Female", "Female"),
+        ("Other", "Other")
     ])
 
     smoker = forms.ChoiceField(choices=[
-        ("Yes", "Yes"),
-        ("No", "No")
+        ('Non-drinker','Non-drinker'),
+        ('Occasional', 'Occasional'),
+        ('Weekly', 'Weekly'),
+        ('Daily', 'Daily')
     ])
 
     hypertension = forms.IntegerField()
-    cardiovascular = forms.IntegerField()
+    cardiovascular_disease = forms.IntegerField()
